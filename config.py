@@ -21,4 +21,4 @@ component_erosion_steps = 1
 # runtime settings
 training_gpu_device = 0
 testing_gpu_device = training_gpu_device
-image_saving_frequency = 10
+image_saving_frequency = 100
