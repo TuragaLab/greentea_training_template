@@ -65,7 +65,7 @@ dataset['components'] = DVIDDataInstance(hostname, port, node, 'labels1104')
 dataset['body_names_to_exclude'] = body_names_to_exclude
 dataset['component_erosion_steps'] = component_erosion_steps
 dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-dataset['mask_threshold'] = 0.5
+dataset['mask_threshold'] = mask_threshold
 train_dataset.extend([dataset] * 100)
 
 dataset = dict()
@@ -78,7 +78,7 @@ dataset['components'] = DVIDDataInstance(hostname, port, node, 'alpha_123_labels
 dataset['minimum_component_size'] = minimum_component_size
 dataset['component_erosion_steps'] = component_erosion_steps
 dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-dataset['mask_threshold'] = 0.5
+dataset['mask_threshold'] = mask_threshold
 train_dataset.extend([dataset] * 100)
 
 for dataset in train_dataset:
