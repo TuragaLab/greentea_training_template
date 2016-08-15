@@ -34,9 +34,9 @@ class TrainOptions:
     test_device = testing_gpu_device
     # test_net='net_test.prototxt'
     test_net=None
-    max_iter = int(1e4)
-    snapshot = int(2e3)
-    loss_snapshot = int(2e3)
+    max_iter = 10000
+    snapshot = 10000
+    loss_snapshot = 2000
     snapshot_prefix = 'net'
     save_image_snapshot_period = image_saving_frequency
 
