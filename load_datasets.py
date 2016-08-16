@@ -119,10 +119,9 @@ if using_in_memory:
               'components shape:', str(dataset['components'].shape))
         time.sleep(1)
 
-print('Training set contains',
-      len(train_dataset),
-      'volumes:',
-      [dataset['name'] for dataset in train_dataset])
+print('Training set contains', len(train_dataset), 'volumes:')
+for dataset in train_dataset:
+    print(dataset['name'])
 
 ## Testing datasets
 test_dataset = []
