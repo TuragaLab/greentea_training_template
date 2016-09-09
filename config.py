@@ -3,7 +3,7 @@ SAVE_IMAGES = False
 
 # hyperparameters
 base_learning_rate = 5e-5
-fmap_start = 40
+fmap_start = 48
 net_input_shape = [100] * 3
 net_output_shape = [100] * 3
 use_deconvolution_uppath = True  # must be True if input and output shapes are the same
@@ -21,4 +21,4 @@ component_erosion_steps = 1
 # runtime settings
 training_gpu_device = 0
 testing_gpu_device = training_gpu_device
-image_saving_frequency = 100
+image_saving_frequency = 500
