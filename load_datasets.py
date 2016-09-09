@@ -18,43 +18,6 @@ from config import component_erosion_steps
 ## Training datasets
 train_dataset = []
 
-base_dir = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col'
-for name in [
-    'trvol-250-1-h5',
-    'trvol-250-2-h5',
-    'tstvol-520-1-h5'
-    ]:
-    dataset = dict()
-    dataset['name'] = "FlyEM {}".format(name)
-    image_file = h5py.File(os.path.join(base_dir, name, 'im_uint8.h5'), 'r')
-    dataset['data'] = image_file['main']
-    components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg_thick.h5'), 'r')
-    dataset['components'] = components_file['main']
-    dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-    train_dataset.append(dataset)
-
-base_dir = '/nobackup/turaga/grisaitisw/data/toufiq_mushroom'
-for name in ['4400']:
-    dataset = dict()
-    dataset['name'] = "toufiq-mushroom-{}".format(name)
-    image_file = h5py.File(os.path.join(base_dir, name, 'image_from_png_files.h5'), 'r')
-    dataset['data'] = image_file['main']
-    components_file = h5py.File(os.path.join(base_dir, name, 'components_eroded_by_1.h5'), 'r')
-    dataset['components'] = components_file['stack']
-    dataset['image_scaling_factor'] = 1.0
-    train_dataset.append(dataset)
-
-base_dir = '/nobackup/turaga/grisaitisw/data/pb/'
-for name in ['pb']:
-    dataset = dict()
-    dataset['name'] = 'pb {}'.format(name)
-    image_file = h5py.File(os.path.join(base_dir, name, 'image_from_png_files.h5'), 'r')
-    dataset['data'] = image_file['main']
-    components_file = h5py.File(os.path.join(base_dir, name, 'components_eroded_by_1.h5'), 'r')
-    dataset['components'] = components_file['stack']
-    dataset['image_scaling_factor'] = 1.0
-    train_dataset.append(dataset)
-
 dataset = dict()
 dataset['name'] = 'dvid_fib25'
 hostname = 'slowpoke3'
@@ -65,21 +28,8 @@ dataset['components'] = DVIDDataInstance(hostname, port, node, 'labels1104')
 dataset['body_names_to_exclude'] = body_names_to_exclude
 dataset['component_erosion_steps'] = component_erosion_steps
 dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-dataset['mask_threshold'] = 0.5
-train_dataset.extend([dataset] * 100)
-
-dataset = dict()
-dataset['name'] = 'dvid_mb6'
-hostname = 'slowpoke3'
-port = 32770
-node = '6a5a7387b4ce4333aa18d9c8d8647f58'
-dataset['data'] = DVIDDataInstance(hostname, port, node, 'grayscale')
-dataset['components'] = DVIDDataInstance(hostname, port, node, 'alpha_123_labels')
-dataset['minimum_component_size'] = minimum_component_size
-dataset['component_erosion_steps'] = component_erosion_steps
-dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-dataset['mask_threshold'] = 0.5
-train_dataset.extend([dataset] * 100)
+dataset['mask_threshold'] = mask_threshold
+train_dataset.append(dataset)
 
 for dataset in train_dataset:
     dataset['nhood'] = malis.mknhood3d()
