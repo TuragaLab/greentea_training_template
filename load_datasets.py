@@ -6,6 +6,7 @@ import time
 import h5py
 import malis
 import numpy as np
+import pprint
 
 from dvision import DVIDDataInstance
 import PyGreentea as pygt
@@ -18,18 +19,19 @@ from config import component_erosion_steps
 ## Training datasets
 train_dataset = []
 
-dataset = dict()
-dataset['name'] = 'dvid_fib25'
-hostname = 'slowpoke3'
-port = 32773
-node = 'e402c09ddd0f45e980d9be6e9fcb9bd0'
-dataset['data'] = DVIDDataInstance(hostname, port, node, 'grayscale')
-dataset['components'] = DVIDDataInstance(hostname, port, node, 'labels1104')
-dataset['body_names_to_exclude'] = body_names_to_exclude
-dataset['component_erosion_steps'] = component_erosion_steps
-dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-dataset['mask_threshold'] = mask_threshold
-train_dataset.append(dataset)
+base_dir = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col'
+for name in [
+    'tstvol-520-1-h5'
+    ]:
+    dataset = dict()
+    dataset['name'] = "FlyEM {}".format(name)
+    image_file = h5py.File(os.path.join(base_dir, name, 'im_uint8.h5'), 'r')
+    dataset['data'] = image_file['main']
+    components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg_thick.h5'), 'r')
+    dataset['components'] = components_file['main']
+    dataset['image_scaling_factor'] = 0.5 ** 8
+    train_dataset.append(dataset)
+
 
 for dataset in train_dataset:
     dataset['nhood'] = malis.mknhood3d()
@@ -69,10 +71,13 @@ if using_in_memory:
               'components shape:', str(dataset['components'].shape))
         time.sleep(1)
 
+
 print('Training set contains',
       len(train_dataset),
       'volumes:',
-      [dataset['name'] for dataset in train_dataset])
+      [dataset['name'] for dataset in train_dataset],
+      "with dtype/shapes",
+      [(array.dtype, array.shape) for array in [dataset[key] for key in ("data", "components", "label")] for dataset in train_dataset])
 
 ## Testing datasets
 test_dataset = []
