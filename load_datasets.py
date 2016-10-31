@@ -8,8 +8,8 @@ import malis
 import numpy as np
 import pprint
 
-from dvision import DVIDDataInstance
-import PyGreentea as pygt
+# from dvision import DVIDDataInstance
+# import PyGreentea as pygt
 
 from config import using_in_memory, simple_augmenting
 from config import mask_threshold, mask_dilation_steps
@@ -68,6 +68,7 @@ if using_in_memory:
     train_dataset = map(convert_hdf5_to_in_memory, train_dataset)
     if simple_augmenting:
         print('running simple augmentation')
+        import PyGreentea as pygt
         train_dataset = pygt.augment_data_simple(train_dataset)
     for dataset in train_dataset:
         dataset['data'] = dataset['data'][None, :]
