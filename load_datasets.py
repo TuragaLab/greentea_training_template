@@ -19,18 +19,25 @@ from config import component_erosion_steps
 ## Training datasets
 train_dataset = []
 
-base_dir = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col'
+base_dir = '/nobackup/turaga/data/FlyEM/fibsem_medulla_7col'
 for name in [
-    'tstvol-520-1-h5'
+    # 'trvol-250-1-h5',
+    # 'trvol-250-2-h5',
+    # 'tstvol-520-1-h5',
+    'tstvol-520-1'
     ]:
-    dataset = dict()
-    dataset['name'] = "FlyEM {}".format(name)
     image_file = h5py.File(os.path.join(base_dir, name, 'im_uint8.h5'), 'r')
-    dataset['data'] = image_file['main']
     components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg_thick.h5'), 'r')
-    dataset['components'] = components_file['main']
-    dataset['image_scaling_factor'] = 0.5 ** 8
-    train_dataset.append(dataset)
+    mask_file = h5py.File(os.path.join(base_dir, name, 'mask.h5'), 'r')
+    for h5_key in image_file:
+        print("Adding", h5_key)
+        dataset = dict()
+        dataset['name'] = "FlyEM {0} {1}".format(name, h5_key)
+        dataset['data'] = image_file[h5_key]
+        dataset['components'] = components_file[h5_key]
+        dataset['mask'] = mask_file[h5_key]
+        dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
+        train_dataset.append(dataset)
 
 
 for dataset in train_dataset:
@@ -77,7 +84,7 @@ print('Training set contains',
       'volumes:',
       [dataset['name'] for dataset in train_dataset],
       "with dtype/shapes",
-      [(array.dtype, array.shape) for array in [dataset[key] for key in ("data", "components", "label")] for dataset in train_dataset])
+      [(array.dtype, array.shape) for array in [dataset[key] for key in ("data", "components")] for dataset in train_dataset])
 
 ## Testing datasets
 test_dataset = []
