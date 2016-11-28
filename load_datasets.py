@@ -20,16 +20,20 @@ from config import component_erosion_steps
 train_dataset = []
 
 base_dir = '/nobackup/turaga/data/FlyEM/fibsem_medulla_7col'
-for name in [
-    # 'trvol-250-1-h5',
-    # 'trvol-250-2-h5',
-    # 'tstvol-520-1-h5',
-    'tstvol-520-1'
-    ]:
+for name in ['tstvol-520-1']:
     image_file = h5py.File(os.path.join(base_dir, name, 'im_uint8.h5'), 'r')
     components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg_thick.h5'), 'r')
     mask_file = h5py.File(os.path.join(base_dir, name, 'mask.h5'), 'r')
-    for h5_key in image_file:
+    for h5_key in (
+        "tstvol-520-1-h5_y0_x0_xy0_angle000.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle022.5",
+        "tstvol-520-1-h5_y0_x0_xy0_angle045.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle067.5",
+        "tstvol-520-1-h5_y0_x0_xy0_angle090.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle112.5",
+        "tstvol-520-1-h5_y0_x0_xy0_angle135.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle157.5",
+        ):
         print("Adding", h5_key)
         dataset = dict()
         dataset['name'] = "FlyEM {0} {1}".format(name, h5_key)
@@ -43,6 +47,7 @@ for name in [
 for dataset in train_dataset:
     dataset['nhood'] = malis.mknhood3d()
     dataset['mask_dilation_steps'] = mask_dilation_steps
+    dataset['simple_augment'] = simple_augmenting
     dataset['transform'] = {}
     dataset['transform']['scale'] = (0.9, 1.1)
     dataset['transform']['shift'] = (-0.1, 0.1)
