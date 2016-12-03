@@ -1,6 +1,6 @@
 rm snapshots/*
 
-sudo mount --make-shared /nobackup/turaga
+sudo mount --make-shared /nrs/turaga
 
 export NAME=$(basename "$PWD")
 
@@ -11,9 +11,7 @@ NV_GPU=0 \
     -u `id -u $USER` \
     -v $(pwd):/workspace \
     -v /groups/turaga/home:/groups/turaga/home \
-    -v /nobackup/turaga:/nobackup/turaga:shared \
-    -v $(pwd)/PyGreentea:/opt/PyGreentea \
+    -v /nrs/turaga:/nrs/turaga:shared \
     --name $NAME \
-    turagalab/greentea:cudnn5-caffe_gt-2016.10.27-pygt-0.9.3b-new \
+    turagalab/greentea:cudnn5-caffe_gt-2016.12.02-pygt-0.9.4b \
     python -u train.py
-

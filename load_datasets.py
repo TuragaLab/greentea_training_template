@@ -19,7 +19,7 @@ from config import component_erosion_steps
 ## Training datasets
 train_dataset = []
 
-base_dir = '/nobackup/turaga/data/FlyEM/fibsem_medulla_7col'
+base_dir = '/nrs/turaga/data/FlyEM/fibsem_medulla_7col'
 for name in ['tstvol-520-1']:
     image_file = h5py.File(os.path.join(base_dir, name, 'im_uint8.h5'), 'r')
     components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg_thick.h5'), 'r')
