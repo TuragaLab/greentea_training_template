@@ -13,6 +13,6 @@ NV_GPU=1 \
     -v /groups/turaga/home:/groups/turaga/home \
     -v /nrs/turaga:/nrs/turaga:shared \
     --name $NAME \
-    turagalab/greentea:cuda8.0-cudnn5-caffe_gt-2016.12.02-pygt-0.9.4b \
+    turagalab/greentea:cudnn5-caffe_gt-2016.12.05-pygt-0.9.4b \
     python -u train.py
 
