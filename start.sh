@@ -6,7 +6,7 @@ export NAME=$(basename "$PWD")
 
 nvidia-docker rm $NAME
 
-NV_GPU=3 \
+NV_GPU=4 \
     nvidia-docker run -d \
     -u `id -u $USER` \
     -v $(pwd):/workspace \

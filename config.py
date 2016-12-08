@@ -4,9 +4,9 @@ SAVE_IMAGES = False
 # hyperparameters
 base_learning_rate = 1e-4
 fmap_start = 24
-net_input_shape = [100] * 3
-net_output_shape = [100] * 3
-use_deconvolution_uppath = True  # must be True if input and output shapes are the same
+net_input_shape = [132] * 3
+net_output_shape = [44] * 3
+use_deconvolution_uppath = False  # must be True if input and output shapes are the same
 malis_split_component_phases = False
 
 # data prep paramaters
