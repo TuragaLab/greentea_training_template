@@ -35,7 +35,7 @@ class TrainOptions:
     # test_net='net_test.prototxt'
     test_net=None
     max_iter = 10000
-    snapshot = 10000
+    snapshot = 2000
     loss_snapshot = 2000    
     snapshot_prefix = 'net'
     save_image_snapshot_period = image_saving_frequency
