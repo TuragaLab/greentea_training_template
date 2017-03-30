@@ -1,3 +1,5 @@
+import numpy as np
+
 DEBUG = False
 SAVE_IMAGES = False
 
@@ -17,6 +19,10 @@ simple_augmenting = True
 minimum_component_size = 0
 body_names_to_exclude = []
 component_erosion_steps = 0
+random_state = np.random.RandomState(seed=0)
+from bodies_tstvol_520_1_h5 import body_list
+body_ids_to_include = random_state.choice(body_list, int(0.8 * len(body_list)))
+print(len(body_ids_to_include))
 
 # runtime settings
 training_gpu_device = 0

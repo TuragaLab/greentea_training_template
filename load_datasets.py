@@ -6,15 +6,9 @@ import time
 import h5py
 import malis
 import numpy as np
-import pprint
 
-# from dvision import DVIDDataInstance
-# import PyGreentea as pygt
-
-from config import using_in_memory, simple_augmenting
+from config import using_in_memory, simple_augmenting, body_ids_to_include
 from config import mask_threshold, mask_dilation_steps
-from config import minimum_component_size, body_names_to_exclude
-from config import component_erosion_steps
 
 ## Training datasets
 train_dataset = []
@@ -51,6 +45,7 @@ for dataset in train_dataset:
     dataset['transform'] = {}
     dataset['transform']['scale'] = (0.9, 1.1)
     dataset['transform']['shift'] = (-0.1, 0.1)
+    dataset['body_ids_to_include'] = body_ids_to_include
 
 def convert_hdf5_to_in_memory(dataset, simple_augment=False):
     assert type(dataset['data']) is h5py.Dataset, type(dataset['data'])
