@@ -1,8 +1,5 @@
 from __future__ import print_function
-import sys, os, math
-import h5py
-import numpy as np
-from numpy import float32, int32, uint8, dtype
+import sys, math
 
 from config import fmap_start, net_input_shape, net_output_shape, use_deconvolution_uppath
 

@@ -13,10 +13,10 @@ from config import mask_threshold, mask_dilation_steps
 ## Training datasets
 train_dataset = []
 
-base_dir = '/nrs/turaga/data/FlyEM/fibsem_medulla_7col'
-for name in ['tstvol-520-1']:
+base_dir = '/nrs/turaga/grisaitisw/data/FlyEM/fibsem_medulla_7col/rotations_20170407/augmentations'
+for name in ['tstvol-520-1-h5']:
     image_file = h5py.File(os.path.join(base_dir, name, 'im_uint8.h5'), 'r')
-    components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg_thick.h5'), 'r')
+    components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg.h5'), 'r')
     mask_file = h5py.File(os.path.join(base_dir, name, 'mask.h5'), 'r')
     for h5_key in (
         "tstvol-520-1-h5_y0_x0_xy0_angle000.0",
@@ -35,12 +35,14 @@ for name in ['tstvol-520-1']:
         dataset['components'] = components_file[h5_key]
         dataset['mask'] = mask_file[h5_key]
         dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
+        dataset['component_erosion_steps'] = 1
         train_dataset.append(dataset)
 
 
 for dataset in train_dataset:
     dataset['nhood'] = malis.mknhood3d()
     dataset['mask_dilation_steps'] = mask_dilation_steps
+    dataset['mask_threshold'] = mask_threshold
     dataset['simple_augment'] = simple_augmenting
     dataset['transform'] = {}
     dataset['transform']['scale'] = (0.9, 1.1)
