@@ -1,127 +1,71 @@
 from __future__ import print_function
 
 import os
-import time
 
 import h5py
 import malis
-import numpy as np
 
 from dvision import DVIDDataInstance
-import PyGreentea as pygt
-
-from config import using_in_memory, simple_augmenting
+from config import simple_augmenting
 from config import mask_threshold, mask_dilation_steps
-from config import minimum_component_size, body_names_to_exclude
+from config import minimum_component_size, dvid_body_names_to_exclude
 from config import component_erosion_steps
 
-## Training datasets
-train_dataset = []
 
-base_dir = '/groups/turaga/home/turagas/data/FlyEM/fibsem_medulla_7col'
-for name in [
-    'trvol-250-1-h5',
-    'trvol-250-2-h5',
-    'tstvol-520-1-h5'
-    ]:
-    dataset = dict()
-    dataset['name'] = "FlyEM {}".format(name)
+train_datasets = []
+
+base_dir = '/nrs/turaga/data/FlyEM/fibsem_medulla_7col'
+for name in ['tstvol-520-1']:
     image_file = h5py.File(os.path.join(base_dir, name, 'im_uint8.h5'), 'r')
-    dataset['data'] = image_file['main']
     components_file = h5py.File(os.path.join(base_dir, name, 'groundtruth_seg_thick.h5'), 'r')
-    dataset['components'] = components_file['main']
-    dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-    train_dataset.append(dataset)
+    mask_file = h5py.File(os.path.join(base_dir, name, 'mask.h5'), 'r')
+    for h5_key in (
+        "tstvol-520-1-h5_y0_x0_xy0_angle000.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle022.5",
+        "tstvol-520-1-h5_y0_x0_xy0_angle045.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle067.5",
+        "tstvol-520-1-h5_y0_x0_xy0_angle090.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle112.5",
+        "tstvol-520-1-h5_y0_x0_xy0_angle135.0",
+        "tstvol-520-1-h5_y0_x0_xy0_angle157.5",
+        ):
+        print("Adding", h5_key)
+        dataset = dict()
+        dataset['name'] = "FlyEM {0} {1}".format(name, h5_key)
+        dataset['data'] = image_file[h5_key]
+        dataset['components'] = components_file[h5_key]
+        dataset['mask'] = mask_file[h5_key]
+        dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
+        train_datasets.append(dataset)
 
-base_dir = '/nobackup/turaga/grisaitisw/data/toufiq_mushroom'
-for name in ['4400']:
-    dataset = dict()
-    dataset['name'] = "toufiq-mushroom-{}".format(name)
-    image_file = h5py.File(os.path.join(base_dir, name, 'image_from_png_files.h5'), 'r')
-    dataset['data'] = image_file['main']
-    components_file = h5py.File(os.path.join(base_dir, name, 'components_eroded_by_1.h5'), 'r')
-    dataset['components'] = components_file['stack']
-    dataset['image_scaling_factor'] = 1.0
-    train_dataset.append(dataset)
+# fib25 = dict(
+#     name="FIB-25 train",
+#     data=DVIDDataInstance("slowpoke3", 32788, "213", "grayscale"),
+#     components=DVIDDataInstance("slowpoke3", 32788, "213", "groundtruth_pruned"),
+#     image_scaling_factor=1.0 / (2.0 ** 8),
+#     component_erosion_steps=component_erosion_steps,
+#     bounding_box=((2000, 5006), (1000, 5000), (2000, 6000)),  # train region
+#     dvid_body_names_to_exclude=dvid_body_names_to_exclude,
+# )
+# train_datasets.extend([fib25] * 8)
 
-base_dir = '/nobackup/turaga/grisaitisw/data/pb/'
-for name in ['pb']:
-    dataset = dict()
-    dataset['name'] = 'pb {}'.format(name)
-    image_file = h5py.File(os.path.join(base_dir, name, 'image_from_png_files.h5'), 'r')
-    dataset['data'] = image_file['main']
-    components_file = h5py.File(os.path.join(base_dir, name, 'components_eroded_by_1.h5'), 'r')
-    dataset['components'] = components_file['stack']
-    dataset['image_scaling_factor'] = 1.0
-    train_dataset.append(dataset)
-
-dataset = dict()
-dataset['name'] = 'dvid_fib25'
-hostname = 'slowpoke3'
-port = 32773
-node = 'e402c09ddd0f45e980d9be6e9fcb9bd0'
-dataset['data'] = DVIDDataInstance(hostname, port, node, 'grayscale')
-dataset['components'] = DVIDDataInstance(hostname, port, node, 'labels1104')
-dataset['body_names_to_exclude'] = body_names_to_exclude
-dataset['component_erosion_steps'] = component_erosion_steps
-dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-dataset['mask_threshold'] = mask_threshold
-train_dataset.extend([dataset] * 100)
-
-dataset = dict()
-dataset['name'] = 'dvid_mb6'
-hostname = 'slowpoke3'
-port = 32770
-node = '6a5a7387b4ce4333aa18d9c8d8647f58'
-dataset['data'] = DVIDDataInstance(hostname, port, node, 'grayscale')
-dataset['components'] = DVIDDataInstance(hostname, port, node, 'alpha_123_labels')
-dataset['minimum_component_size'] = minimum_component_size
-dataset['component_erosion_steps'] = component_erosion_steps
-dataset['image_scaling_factor'] = 1.0 / (2.0 ** 8)
-dataset['mask_threshold'] = mask_threshold
-train_dataset.extend([dataset] * 100)
-
-for dataset in train_dataset:
-    dataset['nhood'] = malis.mknhood3d()
+for dataset in train_datasets:
+    dataset['nhood'] = malis.mknhood3d().astype(int)
+    dataset['mask_threshold'] = mask_threshold
     dataset['mask_dilation_steps'] = mask_dilation_steps
+    dataset['minimum_component_size'] = minimum_component_size
+    dataset['simple_augment'] = simple_augmenting
     dataset['transform'] = {}
     dataset['transform']['scale'] = (0.9, 1.1)
     dataset['transform']['shift'] = (-0.1, 0.1)
 
-def convert_hdf5_to_in_memory(dataset, simple_augment=False):
-    assert type(dataset['data']) is h5py.Dataset, type(dataset['data'])
-    spatial_shape = dataset['data'].shape[-3:]
-    data_file = dataset['data'].file
-    dataset['data'] = np.array(dataset['data'], dtype=np.float32)
-    data_file.close()
-    dataset['data'] = dataset['data'].reshape(spatial_shape)
-    dataset['data'] *= dataset.get('image_scaling_factor', 1)
-    components_file = dataset['components'].file
-    dataset['components'] = np.array(dataset['components'])
-    components_file.close()
-    dataset['components'] = dataset['components'].reshape(spatial_shape)
-    dataset['label'] = malis.seg_to_affgraph(dataset['components'], dataset['nhood'])
-    return dataset
 
-
-if using_in_memory:
-    print('converting to in memory')
-    train_dataset = map(convert_hdf5_to_in_memory, train_dataset)
-    if simple_augmenting:
-        print('running simple augmentation')
-        train_dataset = pygt.augment_data_simple(train_dataset)
-    for dataset in train_dataset:
-        dataset['data'] = dataset['data'][None, :]
-        dataset['components'] = dataset['components'][None, :]
-        print(dataset['name'],
-              'data shape:', str(dataset['data'].shape),
-              'data mean: ', np.mean(dataset['data']),
-              'components shape:', str(dataset['components'].shape))
-        time.sleep(1)
-
-print('Training set contains', len(train_dataset), 'volumes:')
-for dataset in train_dataset:
-    print(dataset['name'])
+print('Training set contains',
+      len(train_datasets),
+      'volumes:',
+      [dataset['name'] for dataset in train_datasets],
+      "with dtype/shapes",
+      [(array.dtype, array.shape) for array in [dataset[key] for key in ("data", "components")] for dataset in train_datasets])
 
 ## Testing datasets
-test_dataset = []
+test_datasets = []

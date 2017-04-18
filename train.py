@@ -1,20 +1,12 @@
 from __future__ import print_function
 
-import sys
-
-import numpy as np
-
-# Load PyGreentea
-# Relative path to where PyGreentea resides
-pygt_path = '../../PyGreentea'
-sys.path.append(pygt_path)
 import PyGreentea as pygt
 
 from config import DEBUG, SAVE_IMAGES
 pygt.DEBUG = DEBUG
 pygt.SAVE_IMAGES = SAVE_IMAGES
 
-from load_datasets import train_dataset, test_dataset
+from load_datasets import train_datasets, test_datasets
 from config import base_learning_rate, training_gpu_device, testing_gpu_device
 from config import image_saving_frequency
 from config import malis_split_component_phases
@@ -33,10 +25,10 @@ class TrainOptions:
     train_device = training_gpu_device
     test_device = testing_gpu_device
     # test_net='net_test.prototxt'
-    test_net=None
-    max_iter = 10000
-    snapshot = 10000
-    loss_snapshot = 2000
+    test_net = None
+    max_iter = 100
+    snapshot = 50
+    loss_snapshot = 50
     snapshot_prefix = 'net'
     save_image_snapshot_period = image_saving_frequency
 
@@ -69,18 +61,18 @@ pygt.caffe.enumerate_devices(False)
 pygt.caffe.set_devices(tuple(set((options.train_device, options.test_device))))
 
 # First training method
-solverstates = pygt.getSolverStates(solver_config.snapshot_prefix);
-if (len(solverstates) == 0 or solverstates[-1][0] < solver_config.max_iter):
+solverstates = pygt.getSolverStates(solver_config.snapshot_prefix)
+if len(solverstates) == 0 or solverstates[-1][0] < solver_config.max_iter:
     solver, test_net = pygt.init_solver(solver_config, options)
-    if (len(solverstates) > 0):
+    if len(solverstates) > 0:
         solver.restore(solverstates[-1][1])
-    pygt.train(solver, test_net, train_dataset, test_dataset, options)
+    pygt.train(solver, test_net, train_datasets, test_datasets, options)
 
 # Second training method
-solverstates = pygt.getSolverStates(solver_config.snapshot_prefix);
+solverstates = pygt.getSolverStates(solver_config.snapshot_prefix)
 if (solverstates[-1][0] >= solver_config.max_iter):
     # Modify some solver options
-    solver_config.max_iter = 400000
+    solver_config.max_iter = 201000
     solver_config.train_net = 'net_train_malis.prototxt'
     options.loss_function = 'malis'
     options.malis_split_component_phases = malis_split_component_phases
@@ -88,4 +80,4 @@ if (solverstates[-1][0] >= solver_config.max_iter):
     solver, test_net = pygt.init_solver(solver_config, options)
     if (len(solverstates) > 0):
         solver.restore(solverstates[-1][1])
-    pygt.train(solver, test_net, train_dataset, test_dataset, options)
+    pygt.train(solver, test_net, train_datasets, test_datasets, options)
