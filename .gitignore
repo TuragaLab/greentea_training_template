@@ -1,7 +1,11 @@
-snapshots
+snapshots*
 *.prototxt
 loss.mat
 good_components_list*
+*caffemodel
+*solverstate
+nohup.out
+.idea
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
