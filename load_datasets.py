@@ -7,7 +7,9 @@ import h5py
 import malis
 import numpy as np
 
-from config import using_in_memory, simple_augmenting, body_ids_to_include
+from dvision import DVIDDataInstance
+
+from config import using_in_memory, simple_augmenting
 from config import mask_threshold, mask_dilation_steps
 
 ## Training datasets
@@ -38,16 +40,24 @@ for name in ['tstvol-520-1-h5']:
         dataset['component_erosion_steps'] = 1
         train_dataset.append(dataset)
 
+fib25 = dict(
+    name="FIB-25 train",
+    data=DVIDDataInstance("slowpoke3", 32788, "213", "grayscale"),
+    components=DVIDDataInstance("slowpoke3", 32788, "213", "groundtruth_pruned"),
+    image_scaling_factor=1.0 / (2.0 ** 8),
+    component_erosion_steps=1,
+    bounding_box=((2000, 5006), (1000, 5000), (2000, 6000)),  # train region
+)
+train_dataset.extend([fib25] * 8)
 
 for dataset in train_dataset:
     dataset['nhood'] = malis.mknhood3d()
     dataset['mask_dilation_steps'] = mask_dilation_steps
-    dataset['mask_threshold'] = mask_threshold
     dataset['simple_augment'] = simple_augmenting
     dataset['transform'] = {}
     dataset['transform']['scale'] = (0.9, 1.1)
     dataset['transform']['shift'] = (-0.1, 0.1)
-    dataset['body_ids_to_include'] = body_ids_to_include
+    dataset['mask_threshold'] = mask_threshold
 
 def convert_hdf5_to_in_memory(dataset, simple_augment=False):
     assert type(dataset['data']) is h5py.Dataset, type(dataset['data'])
