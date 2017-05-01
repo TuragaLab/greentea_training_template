@@ -1,0 +1,37 @@
+[{
+  "container_path": "/nrs/turaga/",
+  "mode": "RW",
+  "source": {
+    "docker_volume": {
+      "driver":"nfs",
+      "name":"nrs.int.janelia.org/nobackup/turaga"
+    },
+    "type":"DOCKER_VOLUME"
+  },
+  "shared" : {
+  }
+},{
+  "container_path": "/groups/turaga/home",
+  "mode": "RW",
+  "source": {
+    "docker_volume": {
+      "driver":"nfs",
+      "name":"dm11.hhmi.org/ifs/groups/turaga/home"
+    },
+    "type":"DOCKER_VOLUME"
+  },
+  "shared" : {
+  }
+},{
+  "container_path": "/groups/saalfeld/home",
+  "mode": "RW",
+  "source": {
+    "docker_volume": {
+      "driver":"nfs",
+      "name":"dm11.hhmi.org/ifs/groups/saalfeld/home"
+    },
+    "type":"DOCKER_VOLUME"
+  },
+  "shared" : {
+  }
+}]
