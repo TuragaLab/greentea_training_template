@@ -26,9 +26,9 @@ class TrainOptions:
     test_device = testing_gpu_device
     # test_net='net_test.prototxt'
     test_net = None
-    max_iter = 100
-    snapshot = 50
-    loss_snapshot = 50
+    max_iter = 10000
+    snapshot = 5000
+    loss_snapshot = 5000
     snapshot_prefix = 'net'
     save_image_snapshot_period = image_saving_frequency
 
@@ -72,7 +72,7 @@ if len(solverstates) == 0 or solverstates[-1][0] < solver_config.max_iter:
 solverstates = pygt.getSolverStates(solver_config.snapshot_prefix)
 if (solverstates[-1][0] >= solver_config.max_iter):
     # Modify some solver options
-    solver_config.max_iter = 201000
+    solver_config.max_iter = 400000
     solver_config.train_net = 'net_train_malis.prototxt'
     options.loss_function = 'malis'
     options.malis_split_component_phases = malis_split_component_phases

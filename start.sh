@@ -13,7 +13,7 @@ NV_GPU=0 \
     -v /groups/turaga/home:/groups/turaga/home \
     -v /nrs/turaga:/nrs/turaga:shared \
     --name $NAME \
-    turagalab/greentea:cuda8.0-cudnn6-caffe_gt-2017.04.17-pygt-0.9.4b \
+    turagalab/greentea:cuda8.0-cudnn6_libdnn-caffe_gt-2017.04.17-pygt-0.9.4b \
     python -u train.py
 
 #    -v $(pwd)/PyGreentea:/opt/PyGreentea \

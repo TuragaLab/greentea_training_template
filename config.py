@@ -2,7 +2,7 @@ DEBUG = False
 SAVE_IMAGES = False
 
 # hyperparameters
-base_learning_rate = 1e-5
+base_learning_rate = 1e-4
 fmap_start = 24
 net_input_shape = [132] * 3
 net_output_shape = [44] * 3
@@ -16,7 +16,7 @@ using_in_memory = False
 simple_augmenting = True
 minimum_component_size = 0
 dvid_body_names_to_exclude = []
-component_erosion_steps = 0
+component_erosion_steps = 1
 
 # runtime settings
 training_gpu_device = 0
